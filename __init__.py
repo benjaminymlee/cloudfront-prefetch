@@ -34,4 +34,4 @@ if __name__ == "__main__":
     for process in processes:
         process.join()
 
-    print('Completed --- %s seconds ---' % (time.time() - start_time))
+    print('Completed ---{}seconds ---'.format(time.time() - start_time))
