@@ -1,3 +1,7 @@
+'''
+CloudFront Invalidation
+'''
+
 try:
     import boto3
     import random
@@ -9,9 +13,6 @@ except ImportError:
 
 client = boto3.client('cloudfront')
 
-'''
-CloudFront Invalidation
-'''
 ##샘플 변수
 DISTRIBUTIONID='E12OX8RSSI1M70'
 BUCKETNAME = 'cf-prefetch'
@@ -23,6 +24,7 @@ NOW = datetime.datetime.now()
 TIMEHASH = time.mktime(NOW.timetuple())
 CALLERREFERENCE = str(HASH+TIMEHASH)
 
+##Path, CF ID 확인(Invalidation 생성 전 체크)
 def check_invalidation_path(distributionId, bucketName, key):
     print('[Started check_invalidation_path]')
     try:
@@ -42,7 +44,7 @@ def check_invalidation_path(distributionId, bucketName, key):
     except ClientError as e:
         print('Failed check_invInvalidation_path: {}' . format(e))
 
-
+##Invalidatoin 생성
 def create_invalidation(distributionId, invalidationPath):
     print('[Started create_invalidation]')
     try:
@@ -64,6 +66,7 @@ def create_invalidation(distributionId, invalidationPath):
     except ClientError as e:
         print('Failed create_invalidation: {}' . format(e))
 
+##Invalidation 상태 확인
 def check_invalidation(distributionId, invalidationId):
     timewait = 0
     status = None
@@ -94,3 +97,4 @@ if __name__ == "__main__":
     invalidation_response = create_invalidation(DISTRIBUTIONID, '/' + cloudfrontPath)
     invalidation_check_response = check_invalidation(DISTRIBUTIONID, invalidation_response.get('Invalidation').get('Id'))
 
+    print('Completed --- {}seconds ---'.format(time.time() - start_time))
